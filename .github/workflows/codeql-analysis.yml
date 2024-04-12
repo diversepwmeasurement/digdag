@@ -1,31 +1,28 @@
-name: "Code scanning"
-
-on:
-  schedule:
-    # Friday 8AM UTC / Friday 5PM JST
-    - cron: '0 8 * * 5'
-
 jobs:
   CodeQL-Build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ref: [ master ]
-
+    runs-on: self-hosted
     steps:
-    - name: Checkout repository
+    - continue-on-error: true
+      name: Checkout repository
       uses: actions/checkout@v2
       with:
         ref: ${{ matrix.ref }}
-
-    - name: Initialize CodeQL
+    - continue-on-error: true
+      name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: java
-
-    - name: Autobuild
+    - continue-on-error: true
+      name: Autobuild
       uses: github/codeql-action/autobuild@v2
-
-    - name: Perform CodeQL Analysis
+    - continue-on-error: true
+      name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+    strategy:
+      matrix:
+        ref:
+        - master
+name: Code scanning
+on:
+  repository_dispatch:
+    types: trigger-ga___codeql-analysis.yml
